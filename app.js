@@ -1,34 +1,36 @@
-const GITHUB_TOKEN = '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';
-const OWNER = 'Codeblub';
-const REPO = 'Blub-AI';
-const FILE_PATH = 'user_data.json';
+// --- CONFIGURATION ---
+const API_KEY = '1215995692-onui8b2svri74b2omn0960lf70mlqbkb.apps.googleusercontent.com'; // Replace with your actual key
 
-// Fetch data from GitHub
-async function getGitHubData() {
-    const response = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
-        headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-    });
-    const data = await response.json();
-    return JSON.parse(atob(data.content)); // Decode base64
+// --- CHAT LOGIC ---
+const userInput = document.getElementById('user-input');
+const chatMessages = document.getElementById('chat-messages');
+const chatWindow = document.getElementById('chat-window');
+
+// Function to add a message to the UI
+function addMessageToUI(text, isUser) {
+    const row = document.createElement('div');
+    row.className = 'message-row';
+    
+    const msg = document.createElement('div');
+    msg.className = `message ${isUser ? 'user' : 'ai'}`;
+    msg.textContent = text;
+    
+    row.appendChild(msg);
+    chatMessages.appendChild(row);
+    
+    // Auto-scroll to the bottom
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Update data on GitHub
-async function updateGitHubData(newData) {
-    const file = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
-        headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-    });
-    const fileData = await file.json();
-
-    await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
-        method: 'PUT',
-        headers: { 
-            'Authorization': `token ${GITHUB_TOKEN}`,
-            'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({
-            message: "Update Blub-AI memory",
-            content: btoa(JSON.stringify(newData, null, 2)), // Encode base64
-            sha: fileData.sha // Required to overwrite
-        })
-    });
-}
+// Event Listener for the input box
+userInput.addEventListener('keypress', async (e) => {
+    if (e.key === 'Enter' && userInput.value.trim()) {
+        const text = userInput.value;
+        addMessageToUI(text, true); // Add user message
+        userInput.value = '';
+        
+        // Add "Thinking..." or call your Gemini function here
+        // const aiReply = await getGeminiResponse(text); 
+        // addMessageToUI(aiReply, false); 
+    }
+});
