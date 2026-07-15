@@ -10,6 +10,7 @@ const chatWindow = document.getElementById('chat-window');
 
 // --- 3. GOOGLE LOGIN CALLBACK ---
 function handleCredentialResponse(response) {
+    // 1. Decode your token (existing code)
     const base64Url = response.credential.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const userProfile = JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -17,7 +18,18 @@ function handleCredentialResponse(response) {
     }).join('')));
     
     console.log("Welcome, " + userProfile.name);
-    // You can add logic here to load their specific chat history!
+
+    // 2. NEW: Hide the login button (change 'g_id_onload' to the ID of your login element)
+    const loginElement = document.querySelector('.g_id_signin'); 
+    if (loginElement) {
+        loginElement.classList.add('hidden');
+    }
+    
+    // 3. NEW: Show your chat interface
+    const chatContainer = document.querySelector('#chat-container'); // Ensure your chat is in a div with this ID
+    if (chatContainer) {
+        chatContainer.classList.remove('hidden');
+    }
 }
 
 // --- 4. CHAT LOGIC ---
