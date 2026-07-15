@@ -1,7 +1,7 @@
 // --- 1. CONFIGURATION ---
 // IMPORTANT: If you are using Codespaces, you can use process.env here. 
 // Otherwise, replace 'YOUR_API_KEY' with your actual Gemini API key.
-const API_KEY = 'AQ.Ab8RN6IU8OEsIWF2tnUIpycyOXXyvxdyKD7tksi220qvU9xqFg'; 
+const API_KEY = 'AQ.Ab8RN6KvrfDqdeHPrfIOsNr37Mh_eaWW_yLZdYo21tuYQM1pFw'; 
 
 // --- 2. ELEMENTS ---
 const userInput = document.getElementById('user-input');
@@ -48,17 +48,33 @@ function addMessageToUI(text, isUser) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-async function getGeminiResponse(userText) {
+async function getGeminiResponse(userText) { 
+    // Ensure you are using the correct native endpoint
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
     try {
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: userText }] }] })
+            headers: { 
+                'Content-Type': 'application/json',
+                // Some new AQ key implementations require this header
+                'x-goog-api-key': API_KEY 
+            },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: userText }] }]
+            })
         });
+
         const data = await response.json();
+        
+        if (data.error) {
+            console.error("Gemini API Error:", data.error);
+            return "Error: " + data.error.message;
+        }
+
         return data.candidates[0].content.parts[0].text;
     } catch (err) {
+        console.error("Fetch Error:", err);
         return "Sorry, I couldn't reach the AI.";
     }
 }
@@ -74,3 +90,10 @@ userInput.addEventListener('keypress', async (e) => {
         addMessageToUI(aiReply, false); // Add AI message
     }
 });
+
+
+
+
+
+
+
