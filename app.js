@@ -1,7 +1,7 @@
 // --- 1. CONFIGURATION ---
 // IMPORTANT: If you are using Codespaces, you can use process.env here. 
 // Otherwise, replace 'YOUR_API_KEY' with your actual Gemini API key.
-const API_KEY = '1215995692-onui8b2svri74b2omn0960lf70mlqbkb.apps.googleusercontent.com'; 
+const API_KEY = 'AQ.Ab8RN6IU8OEsIWF2tnUIpycyOXXyvxdyKD7tksi220qvU9xqFg'; 
 
 // --- 2. ELEMENTS ---
 const userInput = document.getElementById('user-input');
