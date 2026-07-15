@@ -48,17 +48,18 @@ function addMessageToUI(text, isUser) {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-async function getGeminiResponse(userText) { 
-    // Ensure you are using the correct native endpoint
+async function getGeminiResponse(userText) {
+    const API_KEY = 'AQ.Ab8RN6KvrfDqdeHPrfIOsNr37Mh_eaWW_yLZdYo21tuYQM1pFw'; 
+    // Change 'gemini-1.5-flash' to 'gemini-1.5-flash-latest' 
+    // or just 'gemini-1.5-flash' depending on your specific project availability.
+    // Sometimes using the base model works better:
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 
-                'Content-Type': 'application/json',
-                // Some new AQ key implementations require this header
-                'x-goog-api-key': API_KEY 
+                'Content-Type': 'application/json' 
             },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: userText }] }]
@@ -67,14 +68,15 @@ async function getGeminiResponse(userText) {
 
         const data = await response.json();
         
+        // If the model name is the issue, try 'gemini-1.5-pro' 
+        // or check your Google AI Studio dashboard for the exact model name available.
         if (data.error) {
-            console.error("Gemini API Error:", data.error);
+            console.error("Gemini API Error:", data.error.message);
             return "Error: " + data.error.message;
         }
 
         return data.candidates[0].content.parts[0].text;
     } catch (err) {
-        console.error("Fetch Error:", err);
         return "Sorry, I couldn't reach the AI.";
     }
 }
